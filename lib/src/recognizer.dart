@@ -4,9 +4,10 @@ import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
 import 'package:flutter/services.dart';
-import 'package:vosk_flutter/src/generated_vosk_bindings.dart';
-import 'package:vosk_flutter/src/utils.dart';
-import 'package:vosk_flutter/vosk_flutter.dart';
+
+import '../vosk_flutter.dart';
+import 'generated_vosk_bindings.dart';
+import 'utils.dart';
 
 /// Class representing the recognizer created by the plugin.
 class Recognizer {
@@ -16,11 +17,11 @@ class Recognizer {
     required this.id,
     required this.model,
     required this.sampleRate,
-    required MethodChannel channel,
+    required final MethodChannel channel,
     this.recognizerPointer,
-    VoskLibrary? voskLibrary,
-  })  : _channel = channel,
-        _voskLibrary = voskLibrary;
+    final VoskLibrary? voskLibrary,
+  }) : _channel = channel,
+       _voskLibrary = voskLibrary;
 
   /// Unique id of the recognizer.
   final int id;
@@ -38,7 +39,7 @@ class Recognizer {
   final VoskLibrary? _voskLibrary;
 
   /// Configures recognizer to output n-best results.
-  Future<void> setMaxAlternatives(int maxAlternatives) {
+  Future<void> setMaxAlternatives(final int maxAlternatives) {
     if (_voskLibrary != null) {
       _voskLibrary.vosk_recognizer_set_max_alternatives(
         recognizerPointer!,
@@ -47,19 +48,15 @@ class Recognizer {
       return Future.value();
     }
 
-    return _invokeRecognizerMethod<void>(
-      'setMaxAlternatives',
-      {'maxAlternatives': maxAlternatives},
-    );
+    return _invokeRecognizerMethod<void>('setMaxAlternatives', {
+      'maxAlternatives': maxAlternatives,
+    });
   }
 
   /// Enables/disables words with times in the output of the [getResult].
-  Future<void> setWords({required bool words}) {
+  Future<void> setWords({required final bool words}) {
     if (_voskLibrary != null) {
-      _voskLibrary.vosk_recognizer_set_words(
-        recognizerPointer!,
-        words ? 1 : 0,
-      );
+      _voskLibrary.vosk_recognizer_set_words(recognizerPointer!, words ? 1 : 0);
       return Future.value();
     }
 
@@ -67,7 +64,7 @@ class Recognizer {
   }
 
   /// Same as [setWords] but for [getPartialResult].
-  Future<void> setPartialWords({required bool partialWords}) {
+  Future<void> setPartialWords({required final bool partialWords}) {
     if (_voskLibrary != null) {
       _voskLibrary.vosk_recognizer_set_partial_words(
         recognizerPointer!,
@@ -76,17 +73,16 @@ class Recognizer {
       return Future.value();
     }
 
-    return _invokeRecognizerMethod<void>(
-      'setPartialWords',
-      {'partialWords': partialWords},
-    );
+    return _invokeRecognizerMethod<void>('setPartialWords', {
+      'partialWords': partialWords,
+    });
   }
 
   /// Accept and process new chunk of voice data(audio data in PCM 16-bit
   /// mono format).
-  Future<bool> acceptWaveformBytes(Uint8List bytes) {
+  Future<bool> acceptWaveformBytes(final Uint8List bytes) {
     if (_voskLibrary != null) {
-      final result = using((arena) {
+      final result = using((final arena) {
         final data = bytes.toCharPtr(arena);
         return _voskLibrary.vosk_recognizer_accept_waveform(
           recognizerPointer!,
@@ -97,15 +93,16 @@ class Recognizer {
       return Future.value(result == 1);
     }
 
-    return _invokeRecognizerMethod<bool>('acceptWaveForm', {'bytes': bytes})
-        .then((value) => value!);
+    return _invokeRecognizerMethod<bool>('acceptWaveForm', {
+      'bytes': bytes,
+    }).then((final value) => value!);
   }
 
   /// Accept and process new chunk of voice data(audio data in PCM 16-bit
   /// mono format).
-  Future<bool> acceptWaveformFloats(Float32List floats) {
+  Future<bool> acceptWaveformFloats(final Float32List floats) {
     if (_voskLibrary != null) {
-      final result = using((arena) {
+      final result = using((final arena) {
         final data = floats.toFloatPtr(arena);
         return _voskLibrary.vosk_recognizer_accept_waveform_f(
           recognizerPointer!,
@@ -117,8 +114,9 @@ class Recognizer {
       return Future.value(result == 1);
     }
 
-    return _invokeRecognizerMethod<bool>('acceptWaveForm', {'floats': floats})
-        .then((value) => value!);
+    return _invokeRecognizerMethod<bool>('acceptWaveForm', {
+      'floats': floats,
+    }).then((final value) => value!);
   }
 
   /// Returns speech recognition result.
@@ -131,8 +129,9 @@ class Recognizer {
       return Future.value(result.toDartString());
     }
 
-    return _invokeRecognizerMethod<String>('getResult')
-        .then((value) => value ?? '{}');
+    return _invokeRecognizerMethod<String>(
+      'getResult',
+    ).then((final value) => value ?? '{}');
   }
 
   /// Returns partial speech recognition.
@@ -141,13 +140,15 @@ class Recognizer {
   /// If word times enabled returns word time, see also [setWords].
   Future<String> getPartialResult() {
     if (_voskLibrary != null) {
-      final result =
-          _voskLibrary.vosk_recognizer_partial_result(recognizerPointer!);
+      final result = _voskLibrary.vosk_recognizer_partial_result(
+        recognizerPointer!,
+      );
       return Future.value(result.toDartString());
     }
 
-    return _invokeRecognizerMethod<String>('getPartialResult')
-        .then((value) => value ?? '{}');
+    return _invokeRecognizerMethod<String>(
+      'getPartialResult',
+    ).then((final value) => value ?? '{}');
   }
 
   /// Returns speech recognition result. Same as result, but doesn't wait for
@@ -156,32 +157,30 @@ class Recognizer {
   /// got processed.
   Future<String> getFinalResult() {
     if (_voskLibrary != null) {
-      final result =
-          _voskLibrary.vosk_recognizer_final_result(recognizerPointer!);
+      final result = _voskLibrary.vosk_recognizer_final_result(
+        recognizerPointer!,
+      );
       return Future.value(result.toDartString());
     }
 
-    return _invokeRecognizerMethod<String>('getFinalResult')
-        .then((value) => value ?? '{}');
+    return _invokeRecognizerMethod<String>(
+      'getFinalResult',
+    ).then((final value) => value ?? '{}');
   }
 
   /// Reconfigures recognizer to use grammar.
-  Future<void> setGrammar(List<String> grammar) {
+  Future<void> setGrammar(final List<String> grammar) {
     if (_voskLibrary != null) {
-      using((arena) {
+      using((final arena) {
         final grammarString = jsonEncode(grammar).toCharPtr(arena);
-        _voskLibrary.vosk_recognizer_set_grm(
-          recognizerPointer!,
-          grammarString,
-        );
+        _voskLibrary.vosk_recognizer_set_grm(recognizerPointer!, grammarString);
       });
       return Future.value();
     }
 
-    return _invokeRecognizerMethod<void>(
-      'setGrammar',
-      {'grammar': jsonEncode(grammar)},
-    );
+    return _invokeRecognizerMethod<void>('setGrammar', {
+      'grammar': jsonEncode(grammar),
+    });
   }
 
   /// Resets current results so the recognition can continue from scratch.
@@ -206,8 +205,8 @@ class Recognizer {
   }
 
   Future<T?> _invokeRecognizerMethod<T>(
-    String method, [
-    Map<String, dynamic> arguments = const {},
+    final String method, [
+    final Map<String, dynamic> arguments = const {},
   ]) {
     final args = Map<String, dynamic>.from(arguments);
     args['recognizerId'] = id;
@@ -215,7 +214,6 @@ class Recognizer {
   }
 
   @override
-  String toString() {
-    return 'Recognizer[id=$id, model=$model, sampleRate=$sampleRate]';
-  }
+  String toString() =>
+      'Recognizer[id=$id, model=$model, sampleRate=$sampleRate]';
 }

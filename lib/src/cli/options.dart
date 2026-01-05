@@ -1,5 +1,5 @@
 import 'package:build_cli_annotations/build_cli_annotations.dart';
-import 'package:vosk_flutter/src/cli/target_os_type.dart';
+import 'target_os_type.dart';
 
 part 'options.g.dart';
 
@@ -15,7 +15,9 @@ class Options {
 String get usage => _$parserForOptions.usage;
 
 /// Populate parser with generated options.
-ArgParser populateOptionsParser(ArgParser p) => _$populateOptionsParser(p);
+ArgParser populateOptionsParser(final ArgParser p) =>
+    _$populateOptionsParser(p);
 
 /// Parse options.
-Options parseOptionsResult(ArgResults results) => _$parseOptionsResult(results);
+Options parseOptionsResult(final ArgResults results) =>
+    _$parseOptionsResult(results);

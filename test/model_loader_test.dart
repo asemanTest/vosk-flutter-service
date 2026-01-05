@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
 import 'package:path/path.dart' as path;
-import 'package:vosk_flutter/src/model_loader.dart';
+import 'package:vosk_flutter_service/src/model_loader.dart';
 
 class MockClient extends Mock implements http.Client {}
 
@@ -31,7 +31,7 @@ void main() {
           "size": 1377395170,
           "size_text": "1.3GiB",
           "type": "big",
-          "url": "https://alphacephei.com/vosk/models/vosk-model-ar-0.22-linto-1.1.0.zip",
+          "url": "https://bechattaoui.dev/vosk/models/vosk-model-ar-0.22-linto-1.1.0.zip",
           "version": "0.22-linto-1.1.0"
       },
       {
@@ -43,7 +43,7 @@ void main() {
           "size": 333241610,
           "size_text": "317.8MiB",
           "type": "big",
-          "url": "https://alphacephei.com/vosk/models/vosk-model-ar-mgb2-0.4.zip",
+          "url": "https://bechattaoui.dev/vosk/models/vosk-model-ar-mgb2-0.4.zip",
           "version": "mbg2-0.4"
       }
     ]
@@ -59,9 +59,10 @@ void main() {
     final archive = Archive()
       ..addFile(ArchiveFile.string('$testModelName/$testModelName.file', ''));
 
-    modelBytes = Uint8List.fromList(ZipEncoder().encode(archive)!);
-    when(() => assetBundle.load(any()))
-        .thenAnswer((_) async => modelBytes.buffer.asByteData());
+    modelBytes = Uint8List.fromList(ZipEncoder().encode(archive));
+    when(
+      () => assetBundle.load(any()),
+    ).thenAnswer((final _) async => modelBytes.buffer.asByteData());
   });
 
   tearDown(() {
@@ -73,8 +74,9 @@ void main() {
   group('ModelLoader', () {
     test('Loads a list of models from a remote server', () async {
       registerFallbackValue(Uri.parse(''));
-      when(() => client.get(any()))
-          .thenAnswer((_) async => http.Response(modelsJson, 200));
+      when(
+        () => client.get(any()),
+      ).thenAnswer((final _) async => http.Response(modelsJson, 200));
 
       final modelsList = await modelLoader.loadModelsList();
       expect(modelsList.length, 2);
@@ -88,8 +90,9 @@ void main() {
     });
 
     test('Loads a model from assets', () async {
-      final modelPath =
-          await modelLoader.loadFromAssets('assets/models/$testModelName');
+      final modelPath = await modelLoader.loadFromAssets(
+        'assets/models/$testModelName',
+      );
 
       expect(
         Directory(modelPath).existsSync(),
@@ -100,11 +103,12 @@ void main() {
 
     test('Loads a model from the network', () async {
       registerFallbackValue(Uri.parse(''));
-      when(() => client.get(any()))
-          .thenAnswer((_) async => http.Response.bytes(modelBytes, 200));
+      when(
+        () => client.get(any()),
+      ).thenAnswer((final _) async => http.Response.bytes(modelBytes, 200));
 
       final modelPath = await modelLoader.loadFromNetwork(
-        'https://alphacephei.com/vosk/models/$testModelName.zip',
+        'https://bechattaoui.dev/vosk/models/$testModelName.zip',
       );
 
       expect(

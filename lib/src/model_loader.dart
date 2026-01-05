@@ -13,12 +13,16 @@ import 'package:path_provider/path_provider.dart';
 /// Models are loaded in separate isolates.
 class ModelLoader {
   /// Create a new instance of model loader with an optional [modelStorage].
-  ModelLoader({this.modelStorage, this.assetBundle, http.Client? httpClient}) {
+  ModelLoader({
+    this.modelStorage,
+    this.assetBundle,
+    final http.Client? httpClient,
+  }) {
     this.httpClient = httpClient ?? http.Client();
   }
 
   static const String _modelsListUrl =
-      'https://alphacephei.com/vosk/models/model-list.json';
+      'https://bechattaoui.dev/vosk/models/model-list.json';
 
   /// The path where the models loaded by this model loader will be located.
   /// If not specified [_defaultDecompressionPath] is used.
@@ -36,8 +40,8 @@ class ModelLoader {
   /// By default, this method will not reload an already loaded model, you can
   /// change this behaviour using the [forceReload] flag.
   Future<String> loadFromAssets(
-    String asset, {
-    bool forceReload = false,
+    final String asset, {
+    final bool forceReload = false,
   }) async {
     final modelName = path.basenameWithoutExtension(asset);
     if (!forceReload && await isModelAlreadyLoaded(modelName)) {
@@ -66,8 +70,8 @@ class ModelLoader {
   /// Tip: you can get a  [LanguageModelDescription] via [loadModelsList]
   /// and use [LanguageModelDescription.url].
   Future<String> loadFromNetwork(
-    String modelUrl, {
-    bool forceReload = false,
+    final String modelUrl, {
+    final bool forceReload = false,
   }) async {
     final modelName = path.basenameWithoutExtension(modelUrl);
     if (!forceReload && await isModelAlreadyLoaded(modelName)) {
@@ -80,7 +84,7 @@ class ModelLoader {
 
     final bytes = await httpClient
         .get(Uri.parse(modelUrl))
-        .then((response) => response.bodyBytes);
+        .then((final response) => response.bodyBytes);
 
     final decompressionPath = await _extractModel(bytes);
     final decompressedModelRoot = path.join(decompressionPath, modelName);
@@ -99,7 +103,7 @@ class ModelLoader {
     final jsonList = jsonDecode(responseJson) as List<dynamic>;
     return jsonList
         .map(
-          (modelJson) => LanguageModelDescription.fromJson(
+          (final modelJson) => LanguageModelDescription.fromJson(
             modelJson as Map<String, dynamic>,
           ),
         )
@@ -107,7 +111,7 @@ class ModelLoader {
   }
 
   /// Check if the model with the [modelName] is already loaded.
-  Future<bool> isModelAlreadyLoaded(String modelName) async {
+  Future<bool> isModelAlreadyLoaded(final String modelName) async {
     final decompressionPath = modelStorage ?? await _defaultDecompressionPath();
     if (Directory(path.join(decompressionPath, modelName)).existsSync()) {
       return true;
@@ -117,12 +121,12 @@ class ModelLoader {
   }
 
   /// Get the storage path of the loaded model.
-  Future<String> modelPath(String modelName) async {
+  Future<String> modelPath(final String modelName) async {
     final decompressionPath = modelStorage ?? await _defaultDecompressionPath();
     return path.join(decompressionPath, modelName);
   }
 
-  Future<String> _extractModel(Uint8List bytes) async {
+  Future<String> _extractModel(final Uint8List bytes) async {
     final archive = ZipDecoder().decodeBytes(bytes);
     final decompressionPath = modelStorage ?? await _defaultDecompressionPath();
 
@@ -137,7 +141,7 @@ class ModelLoader {
 
 /// Description of a model.
 /// You can see the description of all VOSK models at
-/// https://alphacephei.com/vosk/models/model-list.json
+/// https://bechattaoui.dev/vosk/models/model-list.json
 class LanguageModelDescription {
   /// Create a model description.
   LanguageModelDescription({
@@ -154,20 +158,19 @@ class LanguageModelDescription {
   });
 
   /// Create a model description from the json data.
-  factory LanguageModelDescription.fromJson(Map<String, dynamic> json) {
-    return LanguageModelDescription(
-      lang: json['lang'] as String,
-      langText: json['lang_text'] as String,
-      md5: json['md5'] as String,
-      name: json['name'] as String,
-      obsolete: json['obsolete'] == 'true',
-      size: json['size'] as int,
-      sizeText: json['size_text'] as String,
-      type: json['type'] as String,
-      url: json['url'] as String,
-      version: json['version'] as String,
-    );
-  }
+  factory LanguageModelDescription.fromJson(final Map<String, dynamic> json) =>
+      LanguageModelDescription(
+        lang: json['lang'] as String,
+        langText: json['lang_text'] as String,
+        md5: json['md5'] as String,
+        name: json['name'] as String,
+        obsolete: json['obsolete'] == 'true',
+        size: json['size'] as int,
+        sizeText: json['size_text'] as String,
+        type: json['type'] as String,
+        url: json['url'] as String,
+        version: json['version'] as String,
+      );
 
   /// Language code of the model, example: 'en-us'.
   final String lang;
@@ -195,7 +198,7 @@ class LanguageModelDescription {
   final String type;
 
   /// The url of the model file zip,
-  /// example: 'https://alphacephei.com/vosk/models/vosk-model-en-us-0.20.zip'.
+  /// example: 'https://bechattaoui.dev/vosk/models/vosk-model-en-us-0.20.zip'.
   final String url;
 
   /// The version of the model, example: '0.20'.

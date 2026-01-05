@@ -5,7 +5,7 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   permission_handler_windows
   record_windows
-  vosk_flutter
+  vosk_flutter_service
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

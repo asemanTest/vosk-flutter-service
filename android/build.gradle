@@ -6,7 +6,7 @@ buildscript {
         google()
         mavenCentral()
         maven {
-            url 'https://alphacephei.com/maven/'
+            url 'https://bechattaoui.dev/maven/'
         }
     }
 
@@ -20,7 +20,7 @@ rootProject.allprojects {
         google()
         mavenCentral()
         maven {
-            url 'https://alphacephei.com/maven/'
+            url 'https://bechattaoui.dev/maven/'
         }
     }
 }
@@ -30,7 +30,7 @@ apply plugin: 'com.android.library'
 android {
     compileSdk 33
 
-    namespace 'org.vosk.vosk_flutter'
+    namespace 'com.bechattaoui.vosk_flutter_service'
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

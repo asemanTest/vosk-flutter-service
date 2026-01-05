@@ -7,34 +7,31 @@ import 'dart:ffi' as ffi;
 class VoskLibrary {
   /// Holds the symbol lookup function.
   final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
-      _lookup;
+  _lookup;
 
   /// The symbols are looked up in [dynamicLibrary].
   VoskLibrary(ffi.DynamicLibrary dynamicLibrary)
-      : _lookup = dynamicLibrary.lookup;
+    : _lookup = dynamicLibrary.lookup;
 
   /// The symbols are looked up with [lookup].
   VoskLibrary.fromLookup(
-      ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
-          lookup)
-      : _lookup = lookup;
+    ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) lookup,
+  ) : _lookup = lookup;
 
   /// Loads model data from the file and returns the model object
   ///
   /// @param model_path: the path of the model on the filesystem
   /// @returns model object or NULL if problem occured
-  ffi.Pointer<VoskModel> vosk_model_new(
-    ffi.Pointer<ffi.Char> model_path,
-  ) {
-    return _vosk_model_new(
-      model_path,
-    );
+  ffi.Pointer<VoskModel> vosk_model_new(ffi.Pointer<ffi.Char> model_path) {
+    return _vosk_model_new(model_path);
   }
 
-  late final _vosk_model_newPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Pointer<VoskModel> Function(
-              ffi.Pointer<ffi.Char>)>>('vosk_model_new');
+  late final _vosk_model_newPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<VoskModel> Function(ffi.Pointer<ffi.Char>)
+        >
+      >('vosk_model_new');
   late final _vosk_model_new = _vosk_model_newPtr
       .asFunction<ffi.Pointer<VoskModel> Function(ffi.Pointer<ffi.Char>)>();
 
@@ -43,19 +40,16 @@ class VoskLibrary {
   /// The model object is reference-counted so if some recognizer
   /// depends on this model, model might still stay alive. When
   /// last recognizer is released, model will be released too.
-  void vosk_model_free(
-    ffi.Pointer<VoskModel> model,
-  ) {
-    return _vosk_model_free(
-      model,
-    );
+  void vosk_model_free(ffi.Pointer<VoskModel> model) {
+    return _vosk_model_free(model);
   }
 
   late final _vosk_model_freePtr =
       _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<VoskModel>)>>(
-          'vosk_model_free');
-  late final _vosk_model_free =
-      _vosk_model_freePtr.asFunction<void Function(ffi.Pointer<VoskModel>)>();
+        'vosk_model_free',
+      );
+  late final _vosk_model_free = _vosk_model_freePtr
+      .asFunction<void Function(ffi.Pointer<VoskModel>)>();
 
   /// Check if a word can be recognized by the model
   /// @param word: the word
@@ -66,18 +60,19 @@ class VoskLibrary {
     ffi.Pointer<VoskModel> model,
     ffi.Pointer<ffi.Char> word,
   ) {
-    return _vosk_model_find_word(
-      model,
-      word,
-    );
+    return _vosk_model_find_word(model, word);
   }
 
-  late final _vosk_model_find_wordPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Int Function(ffi.Pointer<VoskModel>,
-              ffi.Pointer<ffi.Char>)>>('vosk_model_find_word');
-  late final _vosk_model_find_word = _vosk_model_find_wordPtr.asFunction<
-      int Function(ffi.Pointer<VoskModel>, ffi.Pointer<ffi.Char>)>();
+  late final _vosk_model_find_wordPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<VoskModel>, ffi.Pointer<ffi.Char>)
+        >
+      >('vosk_model_find_word');
+  late final _vosk_model_find_word = _vosk_model_find_wordPtr
+      .asFunction<
+        int Function(ffi.Pointer<VoskModel>, ffi.Pointer<ffi.Char>)
+      >();
 
   /// Loads speaker model data from the file and returns the model object
   ///
@@ -86,15 +81,15 @@ class VoskLibrary {
   ffi.Pointer<VoskSpkModel> vosk_spk_model_new(
     ffi.Pointer<ffi.Char> model_path,
   ) {
-    return _vosk_spk_model_new(
-      model_path,
-    );
+    return _vosk_spk_model_new(model_path);
   }
 
-  late final _vosk_spk_model_newPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Pointer<VoskSpkModel> Function(
-              ffi.Pointer<ffi.Char>)>>('vosk_spk_model_new');
+  late final _vosk_spk_model_newPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<VoskSpkModel> Function(ffi.Pointer<ffi.Char>)
+        >
+      >('vosk_spk_model_new');
   late final _vosk_spk_model_new = _vosk_spk_model_newPtr
       .asFunction<ffi.Pointer<VoskSpkModel> Function(ffi.Pointer<ffi.Char>)>();
 
@@ -103,17 +98,14 @@ class VoskLibrary {
   /// The model object is reference-counted so if some recognizer
   /// depends on this model, model might still stay alive. When
   /// last recognizer is released, model will be released too.
-  void vosk_spk_model_free(
-    ffi.Pointer<VoskSpkModel> model,
-  ) {
-    return _vosk_spk_model_free(
-      model,
-    );
+  void vosk_spk_model_free(ffi.Pointer<VoskSpkModel> model) {
+    return _vosk_spk_model_free(model);
   }
 
   late final _vosk_spk_model_freePtr =
       _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<VoskSpkModel>)>>(
-          'vosk_spk_model_free');
+        'vosk_spk_model_free',
+      );
   late final _vosk_spk_model_free = _vosk_spk_model_freePtr
       .asFunction<void Function(ffi.Pointer<VoskSpkModel>)>();
 
@@ -130,18 +122,22 @@ class VoskLibrary {
     ffi.Pointer<VoskModel> model,
     double sample_rate,
   ) {
-    return _vosk_recognizer_new(
-      model,
-      sample_rate,
-    );
+    return _vosk_recognizer_new(model, sample_rate);
   }
 
-  late final _vosk_recognizer_newPtr = _lookup<
-      ffi.NativeFunction<
+  late final _vosk_recognizer_newPtr =
+      _lookup<
+        ffi.NativeFunction<
           ffi.Pointer<VoskRecognizer> Function(
-              ffi.Pointer<VoskModel>, ffi.Float)>>('vosk_recognizer_new');
-  late final _vosk_recognizer_new = _vosk_recognizer_newPtr.asFunction<
-      ffi.Pointer<VoskRecognizer> Function(ffi.Pointer<VoskModel>, double)>();
+            ffi.Pointer<VoskModel>,
+            ffi.Float,
+          )
+        >
+      >('vosk_recognizer_new');
+  late final _vosk_recognizer_new = _vosk_recognizer_newPtr
+      .asFunction<
+        ffi.Pointer<VoskRecognizer> Function(ffi.Pointer<VoskModel>, double)
+      >();
 
   /// Creates the recognizer object with speaker recognition
   ///
@@ -160,22 +156,27 @@ class VoskLibrary {
     double sample_rate,
     ffi.Pointer<VoskSpkModel> spk_model,
   ) {
-    return _vosk_recognizer_new_spk(
-      model,
-      sample_rate,
-      spk_model,
-    );
+    return _vosk_recognizer_new_spk(model, sample_rate, spk_model);
   }
 
-  late final _vosk_recognizer_new_spkPtr = _lookup<
-      ffi.NativeFunction<
+  late final _vosk_recognizer_new_spkPtr =
+      _lookup<
+        ffi.NativeFunction<
           ffi.Pointer<VoskRecognizer> Function(
-              ffi.Pointer<VoskModel>,
-              ffi.Float,
-              ffi.Pointer<VoskSpkModel>)>>('vosk_recognizer_new_spk');
-  late final _vosk_recognizer_new_spk = _vosk_recognizer_new_spkPtr.asFunction<
-      ffi.Pointer<VoskRecognizer> Function(
-          ffi.Pointer<VoskModel>, double, ffi.Pointer<VoskSpkModel>)>();
+            ffi.Pointer<VoskModel>,
+            ffi.Float,
+            ffi.Pointer<VoskSpkModel>,
+          )
+        >
+      >('vosk_recognizer_new_spk');
+  late final _vosk_recognizer_new_spk = _vosk_recognizer_new_spkPtr
+      .asFunction<
+        ffi.Pointer<VoskRecognizer> Function(
+          ffi.Pointer<VoskModel>,
+          double,
+          ffi.Pointer<VoskSpkModel>,
+        )
+      >();
 
   /// Creates the recognizer object with the phrase list
   ///
@@ -201,20 +202,27 @@ class VoskLibrary {
     double sample_rate,
     ffi.Pointer<ffi.Char> grammar,
   ) {
-    return _vosk_recognizer_new_grm(
-      model,
-      sample_rate,
-      grammar,
-    );
+    return _vosk_recognizer_new_grm(model, sample_rate, grammar);
   }
 
-  late final _vosk_recognizer_new_grmPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Pointer<VoskRecognizer> Function(ffi.Pointer<VoskModel>,
-              ffi.Float, ffi.Pointer<ffi.Char>)>>('vosk_recognizer_new_grm');
-  late final _vosk_recognizer_new_grm = _vosk_recognizer_new_grmPtr.asFunction<
-      ffi.Pointer<VoskRecognizer> Function(
-          ffi.Pointer<VoskModel>, double, ffi.Pointer<ffi.Char>)>();
+  late final _vosk_recognizer_new_grmPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<VoskRecognizer> Function(
+            ffi.Pointer<VoskModel>,
+            ffi.Float,
+            ffi.Pointer<ffi.Char>,
+          )
+        >
+      >('vosk_recognizer_new_grm');
+  late final _vosk_recognizer_new_grm = _vosk_recognizer_new_grmPtr
+      .asFunction<
+        ffi.Pointer<VoskRecognizer> Function(
+          ffi.Pointer<VoskModel>,
+          double,
+          ffi.Pointer<ffi.Char>,
+        )
+      >();
 
   /// Adds speaker model to already initialized recognizer
   ///
@@ -226,20 +234,22 @@ class VoskLibrary {
     ffi.Pointer<VoskRecognizer> recognizer,
     ffi.Pointer<VoskSpkModel> spk_model,
   ) {
-    return _vosk_recognizer_set_spk_model(
-      recognizer,
-      spk_model,
-    );
+    return _vosk_recognizer_set_spk_model(recognizer, spk_model);
   }
 
-  late final _vosk_recognizer_set_spk_modelPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Void Function(ffi.Pointer<VoskRecognizer>,
-              ffi.Pointer<VoskSpkModel>)>>('vosk_recognizer_set_spk_model');
-  late final _vosk_recognizer_set_spk_model =
-      _vosk_recognizer_set_spk_modelPtr.asFunction<
-          void Function(
-              ffi.Pointer<VoskRecognizer>, ffi.Pointer<VoskSpkModel>)>();
+  late final _vosk_recognizer_set_spk_modelPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Pointer<VoskRecognizer>,
+            ffi.Pointer<VoskSpkModel>,
+          )
+        >
+      >('vosk_recognizer_set_spk_model');
+  late final _vosk_recognizer_set_spk_model = _vosk_recognizer_set_spk_modelPtr
+      .asFunction<
+        void Function(ffi.Pointer<VoskRecognizer>, ffi.Pointer<VoskSpkModel>)
+      >();
 
   /// Reconfigures recognizer to use grammar
   ///
@@ -250,18 +260,19 @@ class VoskLibrary {
     ffi.Pointer<VoskRecognizer> recognizer,
     ffi.Pointer<ffi.Char> grammar,
   ) {
-    return _vosk_recognizer_set_grm(
-      recognizer,
-      grammar,
-    );
+    return _vosk_recognizer_set_grm(recognizer, grammar);
   }
 
-  late final _vosk_recognizer_set_grmPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Void Function(ffi.Pointer<VoskRecognizer>,
-              ffi.Pointer<ffi.Char>)>>('vosk_recognizer_set_grm');
-  late final _vosk_recognizer_set_grm = _vosk_recognizer_set_grmPtr.asFunction<
-      void Function(ffi.Pointer<VoskRecognizer>, ffi.Pointer<ffi.Char>)>();
+  late final _vosk_recognizer_set_grmPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<VoskRecognizer>, ffi.Pointer<ffi.Char>)
+        >
+      >('vosk_recognizer_set_grm');
+  late final _vosk_recognizer_set_grm = _vosk_recognizer_set_grmPtr
+      .asFunction<
+        void Function(ffi.Pointer<VoskRecognizer>, ffi.Pointer<ffi.Char>)
+      >();
 
   /// Configures recognizer to output n-best results
   ///
@@ -279,16 +290,15 @@ class VoskLibrary {
     ffi.Pointer<VoskRecognizer> recognizer,
     int max_alternatives,
   ) {
-    return _vosk_recognizer_set_max_alternatives(
-      recognizer,
-      max_alternatives,
-    );
+    return _vosk_recognizer_set_max_alternatives(recognizer, max_alternatives);
   }
 
-  late final _vosk_recognizer_set_max_alternativesPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Void Function(ffi.Pointer<VoskRecognizer>,
-              ffi.Int)>>('vosk_recognizer_set_max_alternatives');
+  late final _vosk_recognizer_set_max_alternativesPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<VoskRecognizer>, ffi.Int)
+        >
+      >('vosk_recognizer_set_max_alternatives');
   late final _vosk_recognizer_set_max_alternatives =
       _vosk_recognizer_set_max_alternativesPtr
           .asFunction<void Function(ffi.Pointer<VoskRecognizer>, int)>();
@@ -329,16 +339,15 @@ class VoskLibrary {
     ffi.Pointer<VoskRecognizer> recognizer,
     int words,
   ) {
-    return _vosk_recognizer_set_words(
-      recognizer,
-      words,
-    );
+    return _vosk_recognizer_set_words(recognizer, words);
   }
 
-  late final _vosk_recognizer_set_wordsPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Void Function(ffi.Pointer<VoskRecognizer>,
-              ffi.Int)>>('vosk_recognizer_set_words');
+  late final _vosk_recognizer_set_wordsPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<VoskRecognizer>, ffi.Int)
+        >
+      >('vosk_recognizer_set_words');
   late final _vosk_recognizer_set_words = _vosk_recognizer_set_wordsPtr
       .asFunction<void Function(ffi.Pointer<VoskRecognizer>, int)>();
 
@@ -349,16 +358,15 @@ class VoskLibrary {
     ffi.Pointer<VoskRecognizer> recognizer,
     int partial_words,
   ) {
-    return _vosk_recognizer_set_partial_words(
-      recognizer,
-      partial_words,
-    );
+    return _vosk_recognizer_set_partial_words(recognizer, partial_words);
   }
 
-  late final _vosk_recognizer_set_partial_wordsPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Void Function(ffi.Pointer<VoskRecognizer>,
-              ffi.Int)>>('vosk_recognizer_set_partial_words');
+  late final _vosk_recognizer_set_partial_wordsPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<VoskRecognizer>, ffi.Int)
+        >
+      >('vosk_recognizer_set_partial_words');
   late final _vosk_recognizer_set_partial_words =
       _vosk_recognizer_set_partial_wordsPtr
           .asFunction<void Function(ffi.Pointer<VoskRecognizer>, int)>();
@@ -369,16 +377,15 @@ class VoskLibrary {
     ffi.Pointer<VoskRecognizer> recognizer,
     int nlsml,
   ) {
-    return _vosk_recognizer_set_nlsml(
-      recognizer,
-      nlsml,
-    );
+    return _vosk_recognizer_set_nlsml(recognizer, nlsml);
   }
 
-  late final _vosk_recognizer_set_nlsmlPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Void Function(ffi.Pointer<VoskRecognizer>,
-              ffi.Int)>>('vosk_recognizer_set_nlsml');
+  late final _vosk_recognizer_set_nlsmlPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<VoskRecognizer>, ffi.Int)
+        >
+      >('vosk_recognizer_set_nlsml');
   late final _vosk_recognizer_set_nlsml = _vosk_recognizer_set_nlsmlPtr
       .asFunction<void Function(ffi.Pointer<VoskRecognizer>, int)>();
 
@@ -396,21 +403,28 @@ class VoskLibrary {
     ffi.Pointer<ffi.Char> data,
     int length,
   ) {
-    return _vosk_recognizer_accept_waveform(
-      recognizer,
-      data,
-      length,
-    );
+    return _vosk_recognizer_accept_waveform(recognizer, data, length);
   }
 
-  late final _vosk_recognizer_accept_waveformPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Int Function(ffi.Pointer<VoskRecognizer>, ffi.Pointer<ffi.Char>,
-              ffi.Int)>>('vosk_recognizer_accept_waveform');
+  late final _vosk_recognizer_accept_waveformPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Int Function(
+            ffi.Pointer<VoskRecognizer>,
+            ffi.Pointer<ffi.Char>,
+            ffi.Int,
+          )
+        >
+      >('vosk_recognizer_accept_waveform');
   late final _vosk_recognizer_accept_waveform =
-      _vosk_recognizer_accept_waveformPtr.asFunction<
-          int Function(
-              ffi.Pointer<VoskRecognizer>, ffi.Pointer<ffi.Char>, int)>();
+      _vosk_recognizer_accept_waveformPtr
+          .asFunction<
+            int Function(
+              ffi.Pointer<VoskRecognizer>,
+              ffi.Pointer<ffi.Char>,
+              int,
+            )
+          >();
 
   /// Same as above but the version with the short data for language bindings where you have
   /// audio as array of shorts
@@ -419,21 +433,28 @@ class VoskLibrary {
     ffi.Pointer<ffi.Short> data,
     int length,
   ) {
-    return _vosk_recognizer_accept_waveform_s(
-      recognizer,
-      data,
-      length,
-    );
+    return _vosk_recognizer_accept_waveform_s(recognizer, data, length);
   }
 
-  late final _vosk_recognizer_accept_waveform_sPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Int Function(ffi.Pointer<VoskRecognizer>, ffi.Pointer<ffi.Short>,
-              ffi.Int)>>('vosk_recognizer_accept_waveform_s');
+  late final _vosk_recognizer_accept_waveform_sPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Int Function(
+            ffi.Pointer<VoskRecognizer>,
+            ffi.Pointer<ffi.Short>,
+            ffi.Int,
+          )
+        >
+      >('vosk_recognizer_accept_waveform_s');
   late final _vosk_recognizer_accept_waveform_s =
-      _vosk_recognizer_accept_waveform_sPtr.asFunction<
-          int Function(
-              ffi.Pointer<VoskRecognizer>, ffi.Pointer<ffi.Short>, int)>();
+      _vosk_recognizer_accept_waveform_sPtr
+          .asFunction<
+            int Function(
+              ffi.Pointer<VoskRecognizer>,
+              ffi.Pointer<ffi.Short>,
+              int,
+            )
+          >();
 
   /// Same as above but the version with the float data for language bindings where you have
   /// audio as array of floats
@@ -442,21 +463,28 @@ class VoskLibrary {
     ffi.Pointer<ffi.Float> data,
     int length,
   ) {
-    return _vosk_recognizer_accept_waveform_f(
-      recognizer,
-      data,
-      length,
-    );
+    return _vosk_recognizer_accept_waveform_f(recognizer, data, length);
   }
 
-  late final _vosk_recognizer_accept_waveform_fPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Int Function(ffi.Pointer<VoskRecognizer>, ffi.Pointer<ffi.Float>,
-              ffi.Int)>>('vosk_recognizer_accept_waveform_f');
+  late final _vosk_recognizer_accept_waveform_fPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Int Function(
+            ffi.Pointer<VoskRecognizer>,
+            ffi.Pointer<ffi.Float>,
+            ffi.Int,
+          )
+        >
+      >('vosk_recognizer_accept_waveform_f');
   late final _vosk_recognizer_accept_waveform_f =
-      _vosk_recognizer_accept_waveform_fPtr.asFunction<
-          int Function(
-              ffi.Pointer<VoskRecognizer>, ffi.Pointer<ffi.Float>, int)>();
+      _vosk_recognizer_accept_waveform_fPtr
+          .asFunction<
+            int Function(
+              ffi.Pointer<VoskRecognizer>,
+              ffi.Pointer<ffi.Float>,
+              int,
+            )
+          >();
 
   /// Returns speech recognition result
   ///
@@ -476,17 +504,19 @@ class VoskLibrary {
   ffi.Pointer<ffi.Char> vosk_recognizer_result(
     ffi.Pointer<VoskRecognizer> recognizer,
   ) {
-    return _vosk_recognizer_result(
-      recognizer,
-    );
+    return _vosk_recognizer_result(recognizer);
   }
 
-  late final _vosk_recognizer_resultPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Pointer<ffi.Char> Function(
-              ffi.Pointer<VoskRecognizer>)>>('vosk_recognizer_result');
-  late final _vosk_recognizer_result = _vosk_recognizer_resultPtr.asFunction<
-      ffi.Pointer<ffi.Char> Function(ffi.Pointer<VoskRecognizer>)>();
+  late final _vosk_recognizer_resultPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(ffi.Pointer<VoskRecognizer>)
+        >
+      >('vosk_recognizer_result');
+  late final _vosk_recognizer_result = _vosk_recognizer_resultPtr
+      .asFunction<
+        ffi.Pointer<ffi.Char> Function(ffi.Pointer<VoskRecognizer>)
+      >();
 
   /// Returns partial speech recognition
   ///
@@ -501,18 +531,20 @@ class VoskLibrary {
   ffi.Pointer<ffi.Char> vosk_recognizer_partial_result(
     ffi.Pointer<VoskRecognizer> recognizer,
   ) {
-    return _vosk_recognizer_partial_result(
-      recognizer,
-    );
+    return _vosk_recognizer_partial_result(recognizer);
   }
 
-  late final _vosk_recognizer_partial_resultPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Pointer<ffi.Char> Function(
-              ffi.Pointer<VoskRecognizer>)>>('vosk_recognizer_partial_result');
+  late final _vosk_recognizer_partial_resultPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(ffi.Pointer<VoskRecognizer>)
+        >
+      >('vosk_recognizer_partial_result');
   late final _vosk_recognizer_partial_result =
-      _vosk_recognizer_partial_resultPtr.asFunction<
-          ffi.Pointer<ffi.Char> Function(ffi.Pointer<VoskRecognizer>)>();
+      _vosk_recognizer_partial_resultPtr
+          .asFunction<
+            ffi.Pointer<ffi.Char> Function(ffi.Pointer<VoskRecognizer>)
+          >();
 
   /// Returns speech recognition result. Same as result, but doesn't wait for silence
   /// You usually call it in the end of the stream to get final bits of audio. It
@@ -522,50 +554,45 @@ class VoskLibrary {
   ffi.Pointer<ffi.Char> vosk_recognizer_final_result(
     ffi.Pointer<VoskRecognizer> recognizer,
   ) {
-    return _vosk_recognizer_final_result(
-      recognizer,
-    );
+    return _vosk_recognizer_final_result(recognizer);
   }
 
-  late final _vosk_recognizer_final_resultPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Pointer<ffi.Char> Function(
-              ffi.Pointer<VoskRecognizer>)>>('vosk_recognizer_final_result');
-  late final _vosk_recognizer_final_result =
-      _vosk_recognizer_final_resultPtr.asFunction<
-          ffi.Pointer<ffi.Char> Function(ffi.Pointer<VoskRecognizer>)>();
+  late final _vosk_recognizer_final_resultPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(ffi.Pointer<VoskRecognizer>)
+        >
+      >('vosk_recognizer_final_result');
+  late final _vosk_recognizer_final_result = _vosk_recognizer_final_resultPtr
+      .asFunction<
+        ffi.Pointer<ffi.Char> Function(ffi.Pointer<VoskRecognizer>)
+      >();
 
   /// Resets the recognizer
   ///
   /// Resets current results so the recognition can continue from scratch
-  void vosk_recognizer_reset(
-    ffi.Pointer<VoskRecognizer> recognizer,
-  ) {
-    return _vosk_recognizer_reset(
-      recognizer,
-    );
+  void vosk_recognizer_reset(ffi.Pointer<VoskRecognizer> recognizer) {
+    return _vosk_recognizer_reset(recognizer);
   }
 
-  late final _vosk_recognizer_resetPtr = _lookup<
-          ffi.NativeFunction<ffi.Void Function(ffi.Pointer<VoskRecognizer>)>>(
-      'vosk_recognizer_reset');
+  late final _vosk_recognizer_resetPtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Void Function(ffi.Pointer<VoskRecognizer>)>
+      >('vosk_recognizer_reset');
   late final _vosk_recognizer_reset = _vosk_recognizer_resetPtr
       .asFunction<void Function(ffi.Pointer<VoskRecognizer>)>();
 
   /// Releases recognizer object
   ///
   /// Underlying model is also unreferenced and if needed released
-  void vosk_recognizer_free(
-    ffi.Pointer<VoskRecognizer> recognizer,
-  ) {
-    return _vosk_recognizer_free(
-      recognizer,
-    );
+  void vosk_recognizer_free(ffi.Pointer<VoskRecognizer> recognizer) {
+    return _vosk_recognizer_free(recognizer);
   }
 
-  late final _vosk_recognizer_freePtr = _lookup<
-          ffi.NativeFunction<ffi.Void Function(ffi.Pointer<VoskRecognizer>)>>(
-      'vosk_recognizer_free');
+  late final _vosk_recognizer_freePtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Void Function(ffi.Pointer<VoskRecognizer>)>
+      >('vosk_recognizer_free');
   late final _vosk_recognizer_free = _vosk_recognizer_freePtr
       .asFunction<void Function(ffi.Pointer<VoskRecognizer>)>();
 
@@ -575,19 +602,16 @@ class VoskLibrary {
   /// 0 - default value to print info and error messages but no debug
   /// less than 0 - don't print info messages
   /// greather than 0 - more verbose mode
-  void vosk_set_log_level(
-    int log_level,
-  ) {
-    return _vosk_set_log_level(
-      log_level,
-    );
+  void vosk_set_log_level(int log_level) {
+    return _vosk_set_log_level(log_level);
   }
 
   late final _vosk_set_log_levelPtr =
       _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int)>>(
-          'vosk_set_log_level');
-  late final _vosk_set_log_level =
-      _vosk_set_log_levelPtr.asFunction<void Function(int)>();
+        'vosk_set_log_level',
+      );
+  late final _vosk_set_log_level = _vosk_set_log_levelPtr
+      .asFunction<void Function(int)>();
 
   /// Init, automatically select a CUDA device and allow multithreading.
   /// Must be called once from the main thread.
@@ -609,8 +633,8 @@ class VoskLibrary {
 
   late final _vosk_gpu_thread_initPtr =
       _lookup<ffi.NativeFunction<ffi.Void Function()>>('vosk_gpu_thread_init');
-  late final _vosk_gpu_thread_init =
-      _vosk_gpu_thread_initPtr.asFunction<void Function()>();
+  late final _vosk_gpu_thread_init = _vosk_gpu_thread_initPtr
+      .asFunction<void Function()>();
 
   /// Creates the batch recognizer object
   ///
@@ -618,45 +642,41 @@ class VoskLibrary {
   ffi.Pointer<VoskBatchModel> vosk_batch_model_new(
     ffi.Pointer<ffi.Char> model_path,
   ) {
-    return _vosk_batch_model_new(
-      model_path,
-    );
+    return _vosk_batch_model_new(model_path);
   }
 
-  late final _vosk_batch_model_newPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Pointer<VoskBatchModel> Function(
-              ffi.Pointer<ffi.Char>)>>('vosk_batch_model_new');
-  late final _vosk_batch_model_new = _vosk_batch_model_newPtr.asFunction<
-      ffi.Pointer<VoskBatchModel> Function(ffi.Pointer<ffi.Char>)>();
+  late final _vosk_batch_model_newPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<VoskBatchModel> Function(ffi.Pointer<ffi.Char>)
+        >
+      >('vosk_batch_model_new');
+  late final _vosk_batch_model_new = _vosk_batch_model_newPtr
+      .asFunction<
+        ffi.Pointer<VoskBatchModel> Function(ffi.Pointer<ffi.Char>)
+      >();
 
   /// Releases batch model object
-  void vosk_batch_model_free(
-    ffi.Pointer<VoskBatchModel> model,
-  ) {
-    return _vosk_batch_model_free(
-      model,
-    );
+  void vosk_batch_model_free(ffi.Pointer<VoskBatchModel> model) {
+    return _vosk_batch_model_free(model);
   }
 
-  late final _vosk_batch_model_freePtr = _lookup<
-          ffi.NativeFunction<ffi.Void Function(ffi.Pointer<VoskBatchModel>)>>(
-      'vosk_batch_model_free');
+  late final _vosk_batch_model_freePtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Void Function(ffi.Pointer<VoskBatchModel>)>
+      >('vosk_batch_model_free');
   late final _vosk_batch_model_free = _vosk_batch_model_freePtr
       .asFunction<void Function(ffi.Pointer<VoskBatchModel>)>();
 
   /// Wait for the processing
-  void vosk_batch_model_wait(
-    ffi.Pointer<VoskBatchModel> model,
-  ) {
-    return _vosk_batch_model_wait(
-      model,
-    );
+  void vosk_batch_model_wait(ffi.Pointer<VoskBatchModel> model) {
+    return _vosk_batch_model_wait(model);
   }
 
-  late final _vosk_batch_model_waitPtr = _lookup<
-          ffi.NativeFunction<ffi.Void Function(ffi.Pointer<VoskBatchModel>)>>(
-      'vosk_batch_model_wait');
+  late final _vosk_batch_model_waitPtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Void Function(ffi.Pointer<VoskBatchModel>)>
+      >('vosk_batch_model_wait');
   late final _vosk_batch_model_wait = _vosk_batch_model_waitPtr
       .asFunction<void Function(ffi.Pointer<VoskBatchModel>)>();
 
@@ -666,34 +686,35 @@ class VoskLibrary {
     ffi.Pointer<VoskBatchModel> model,
     double sample_rate,
   ) {
-    return _vosk_batch_recognizer_new(
-      model,
-      sample_rate,
-    );
+    return _vosk_batch_recognizer_new(model, sample_rate);
   }
 
-  late final _vosk_batch_recognizer_newPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Pointer<VoskBatchRecognizer> Function(ffi.Pointer<VoskBatchModel>,
-              ffi.Float)>>('vosk_batch_recognizer_new');
-  late final _vosk_batch_recognizer_new =
-      _vosk_batch_recognizer_newPtr.asFunction<
+  late final _vosk_batch_recognizer_newPtr =
+      _lookup<
+        ffi.NativeFunction<
           ffi.Pointer<VoskBatchRecognizer> Function(
-              ffi.Pointer<VoskBatchModel>, double)>();
+            ffi.Pointer<VoskBatchModel>,
+            ffi.Float,
+          )
+        >
+      >('vosk_batch_recognizer_new');
+  late final _vosk_batch_recognizer_new = _vosk_batch_recognizer_newPtr
+      .asFunction<
+        ffi.Pointer<VoskBatchRecognizer> Function(
+          ffi.Pointer<VoskBatchModel>,
+          double,
+        )
+      >();
 
   /// Releases batch recognizer object
-  void vosk_batch_recognizer_free(
-    ffi.Pointer<VoskBatchRecognizer> recognizer,
-  ) {
-    return _vosk_batch_recognizer_free(
-      recognizer,
-    );
+  void vosk_batch_recognizer_free(ffi.Pointer<VoskBatchRecognizer> recognizer) {
+    return _vosk_batch_recognizer_free(recognizer);
   }
 
-  late final _vosk_batch_recognizer_freePtr = _lookup<
-          ffi
-          .NativeFunction<ffi.Void Function(ffi.Pointer<VoskBatchRecognizer>)>>(
-      'vosk_batch_recognizer_free');
+  late final _vosk_batch_recognizer_freePtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Void Function(ffi.Pointer<VoskBatchRecognizer>)>
+      >('vosk_batch_recognizer_free');
   late final _vosk_batch_recognizer_free = _vosk_batch_recognizer_freePtr
       .asFunction<void Function(ffi.Pointer<VoskBatchRecognizer>)>();
 
@@ -703,23 +724,28 @@ class VoskLibrary {
     ffi.Pointer<ffi.Char> data,
     int length,
   ) {
-    return _vosk_batch_recognizer_accept_waveform(
-      recognizer,
-      data,
-      length,
-    );
+    return _vosk_batch_recognizer_accept_waveform(recognizer, data, length);
   }
 
-  late final _vosk_batch_recognizer_accept_waveformPtr = _lookup<
-      ffi.NativeFunction<
+  late final _vosk_batch_recognizer_accept_waveformPtr =
+      _lookup<
+        ffi.NativeFunction<
           ffi.Void Function(
+            ffi.Pointer<VoskBatchRecognizer>,
+            ffi.Pointer<ffi.Char>,
+            ffi.Int,
+          )
+        >
+      >('vosk_batch_recognizer_accept_waveform');
+  late final _vosk_batch_recognizer_accept_waveform =
+      _vosk_batch_recognizer_accept_waveformPtr
+          .asFunction<
+            void Function(
               ffi.Pointer<VoskBatchRecognizer>,
               ffi.Pointer<ffi.Char>,
-              ffi.Int)>>('vosk_batch_recognizer_accept_waveform');
-  late final _vosk_batch_recognizer_accept_waveform =
-      _vosk_batch_recognizer_accept_waveformPtr.asFunction<
-          void Function(
-              ffi.Pointer<VoskBatchRecognizer>, ffi.Pointer<ffi.Char>, int)>();
+              int,
+            )
+          >();
 
   /// Set NLSML output
   /// @param nlsml - boolean value
@@ -727,16 +753,15 @@ class VoskLibrary {
     ffi.Pointer<VoskBatchRecognizer> recognizer,
     int nlsml,
   ) {
-    return _vosk_batch_recognizer_set_nlsml(
-      recognizer,
-      nlsml,
-    );
+    return _vosk_batch_recognizer_set_nlsml(recognizer, nlsml);
   }
 
-  late final _vosk_batch_recognizer_set_nlsmlPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Void Function(ffi.Pointer<VoskBatchRecognizer>,
-              ffi.Int)>>('vosk_batch_recognizer_set_nlsml');
+  late final _vosk_batch_recognizer_set_nlsmlPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<VoskBatchRecognizer>, ffi.Int)
+        >
+      >('vosk_batch_recognizer_set_nlsml');
   late final _vosk_batch_recognizer_set_nlsml =
       _vosk_batch_recognizer_set_nlsmlPtr
           .asFunction<void Function(ffi.Pointer<VoskBatchRecognizer>, int)>();
@@ -745,15 +770,13 @@ class VoskLibrary {
   void vosk_batch_recognizer_finish_stream(
     ffi.Pointer<VoskBatchRecognizer> recognizer,
   ) {
-    return _vosk_batch_recognizer_finish_stream(
-      recognizer,
-    );
+    return _vosk_batch_recognizer_finish_stream(recognizer);
   }
 
-  late final _vosk_batch_recognizer_finish_streamPtr = _lookup<
-          ffi
-          .NativeFunction<ffi.Void Function(ffi.Pointer<VoskBatchRecognizer>)>>(
-      'vosk_batch_recognizer_finish_stream');
+  late final _vosk_batch_recognizer_finish_streamPtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Void Function(ffi.Pointer<VoskBatchRecognizer>)>
+      >('vosk_batch_recognizer_finish_stream');
   late final _vosk_batch_recognizer_finish_stream =
       _vosk_batch_recognizer_finish_streamPtr
           .asFunction<void Function(ffi.Pointer<VoskBatchRecognizer>)>();
@@ -762,33 +785,30 @@ class VoskLibrary {
   ffi.Pointer<ffi.Char> vosk_batch_recognizer_front_result(
     ffi.Pointer<VoskBatchRecognizer> recognizer,
   ) {
-    return _vosk_batch_recognizer_front_result(
-      recognizer,
-    );
+    return _vosk_batch_recognizer_front_result(recognizer);
   }
 
-  late final _vosk_batch_recognizer_front_resultPtr = _lookup<
-          ffi.NativeFunction<
-              ffi.Pointer<ffi.Char> Function(
-                  ffi.Pointer<VoskBatchRecognizer>)>>(
-      'vosk_batch_recognizer_front_result');
+  late final _vosk_batch_recognizer_front_resultPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(ffi.Pointer<VoskBatchRecognizer>)
+        >
+      >('vosk_batch_recognizer_front_result');
   late final _vosk_batch_recognizer_front_result =
-      _vosk_batch_recognizer_front_resultPtr.asFunction<
-          ffi.Pointer<ffi.Char> Function(ffi.Pointer<VoskBatchRecognizer>)>();
+      _vosk_batch_recognizer_front_resultPtr
+          .asFunction<
+            ffi.Pointer<ffi.Char> Function(ffi.Pointer<VoskBatchRecognizer>)
+          >();
 
   /// Release and free first retrieved result
-  void vosk_batch_recognizer_pop(
-    ffi.Pointer<VoskBatchRecognizer> recognizer,
-  ) {
-    return _vosk_batch_recognizer_pop(
-      recognizer,
-    );
+  void vosk_batch_recognizer_pop(ffi.Pointer<VoskBatchRecognizer> recognizer) {
+    return _vosk_batch_recognizer_pop(recognizer);
   }
 
-  late final _vosk_batch_recognizer_popPtr = _lookup<
-          ffi
-          .NativeFunction<ffi.Void Function(ffi.Pointer<VoskBatchRecognizer>)>>(
-      'vosk_batch_recognizer_pop');
+  late final _vosk_batch_recognizer_popPtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Void Function(ffi.Pointer<VoskBatchRecognizer>)>
+      >('vosk_batch_recognizer_pop');
   late final _vosk_batch_recognizer_pop = _vosk_batch_recognizer_popPtr
       .asFunction<void Function(ffi.Pointer<VoskBatchRecognizer>)>();
 
@@ -796,15 +816,13 @@ class VoskLibrary {
   int vosk_batch_recognizer_get_pending_chunks(
     ffi.Pointer<VoskBatchRecognizer> recognizer,
   ) {
-    return _vosk_batch_recognizer_get_pending_chunks(
-      recognizer,
-    );
+    return _vosk_batch_recognizer_get_pending_chunks(recognizer);
   }
 
-  late final _vosk_batch_recognizer_get_pending_chunksPtr = _lookup<
-          ffi
-          .NativeFunction<ffi.Int Function(ffi.Pointer<VoskBatchRecognizer>)>>(
-      'vosk_batch_recognizer_get_pending_chunks');
+  late final _vosk_batch_recognizer_get_pending_chunksPtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Int Function(ffi.Pointer<VoskBatchRecognizer>)>
+      >('vosk_batch_recognizer_get_pending_chunks');
   late final _vosk_batch_recognizer_get_pending_chunks =
       _vosk_batch_recognizer_get_pending_chunksPtr
           .asFunction<int Function(ffi.Pointer<VoskBatchRecognizer>)>();

@@ -6,22 +6,21 @@ part of 'options.dart';
 // CliGenerator
 // **************************************************************************
 
-T _$enumValueHelper<T>(Map<T, String> enumValues, String source) =>
-    enumValues.entries
-        .singleWhere(
-          (e) => e.value == source,
-          orElse: () => throw ArgumentError(
-            '`$source` is not one of the supported values: '
-            '${enumValues.values.join(', ')}',
-          ),
-        )
-        .key;
+T _$enumValueHelper<T>(Map<T, String> enumValues, String source) => enumValues
+    .entries
+    .singleWhere(
+      (e) => e.value == source,
+      orElse: () => throw ArgumentError(
+        '`$source` is not one of the supported values: '
+        '${enumValues.values.join(', ')}',
+      ),
+    )
+    .key;
 
 T? _$nullableEnumValueHelperNullable<T>(
   Map<T, String> enumValues,
   String? source,
-) =>
-    source == null ? null : _$enumValueHelper(enumValues, source);
+) => source == null ? null : _$enumValueHelper(enumValues, source);
 
 Options _$parseOptionsResult(ArgResults result) => Options()
   ..targetOsType = _$nullableEnumValueHelperNullable(
@@ -31,7 +30,7 @@ Options _$parseOptionsResult(ArgResults result) => Options()
 
 const _$TargetOsTypeEnumMapBuildCli = <TargetOsType, String>{
   TargetOsType.linux: 'linux',
-  TargetOsType.windows: 'windows'
+  TargetOsType.windows: 'windows',
 };
 
 ArgParser _$populateOptionsParser(ArgParser parser) => parser

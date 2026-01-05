@@ -8,12 +8,17 @@ import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:vosk_flutter/src/generated_vosk_bindings.dart';
-import 'package:vosk_flutter/src/utils.dart';
-import 'package:vosk_flutter/vosk_flutter.dart';
+
+import '../vosk_flutter.dart';
+import 'generated_vosk_bindings.dart';
+import 'utils.dart';
 
 /// Provides access to the Vosk speech recognition API.
 class VoskFlutterPlugin {
+  /// Get plugin instance.
+  ///
+  factory VoskFlutterPlugin() => _instance ??= VoskFlutterPlugin._();
+
   VoskFlutterPlugin._() {
     if (_supportsFFI()) {
       _voskLibrary = _loadVoskLibrary();
@@ -28,11 +33,6 @@ class VoskFlutterPlugin {
 
   late VoskLibrary _voskLibrary;
 
-  /// Get plugin instance.
-  ///
-  /// ignore:prefer_constructors_over_static_methods
-  static VoskFlutterPlugin instance() => _instance ??= VoskFlutterPlugin._();
-
   static const MethodChannel _channel = MethodChannel('vosk_flutter');
   static VoskFlutterPlugin? _instance;
 
@@ -41,30 +41,31 @@ class VoskFlutterPlugin {
 
   /// Create a model from model data located at the [modelPath].
   /// See [ModelLoader]
-  Future<Model> createModel(String modelPath) {
+  Future<Model> createModel(final String modelPath) async {
     final completer = Completer<Model>();
 
     if (_supportsFFI()) {
-      compute(_loadModel, modelPath).then(
-        (modelPointer) => completer.complete(
-          Model(modelPath, _channel, Pointer.fromAddress(modelPointer)),
-        ),
-        onError: completer.completeError,
-      );
+      try {
+        final modelPointer = await compute(_loadModel, modelPath);
+        completer.complete(Model(modelPath, Pointer.fromAddress(modelPointer)));
+      } on Object catch (e) {
+        completer.completeError(e);
+      }
     } else if (Platform.isAndroid) {
       _pendingModels[modelPath] = completer;
-      _channel.invokeMethod('model.create', modelPath);
+      await _channel.invokeMethod('model.create', modelPath);
     }
     return completer.future;
   }
 
   /// Create a spaker model from model data located at the [modelPath].
   /// See [ModelLoader]
-  Future<SpeakerModel> createSpeakerModel(String modelPath) {
+  Future<SpeakerModel> createSpeakerModel(final String modelPath) {
     final completer = Completer<SpeakerModel>();
 
     _pendingSpeakerModels[modelPath] = completer;
-    _channel.invokeMethod('speakerModel.create', modelPath);
+    _pendingSpeakerModels[modelPath] = completer;
+    unawaited(_channel.invokeMethod('speakerModel.create', modelPath));
     return completer.future;
   }
 
@@ -75,12 +76,12 @@ class VoskFlutterPlugin {
   /// You can optionally provide [grammar] for the recognizer, see
   /// [Recognizer.setGrammar] for more details about the grammar usage.
   Future<Recognizer> createRecognizer({
-    required Model model,
-    required int sampleRate,
-    List<String>? grammar,
+    required final Model model,
+    required final int sampleRate,
+    final List<String>? grammar,
   }) async {
     if (_supportsFFI()) {
-      return using((arena) {
+      return using((final arena) {
         final recognizerPointer = grammar == null
             ? _voskLibrary.vosk_recognizer_new(
                 model.modelPointer!,
@@ -120,8 +121,8 @@ class VoskFlutterPlugin {
 
   /// Set speaker model for the recognizer
   Future<void> setSpeakerModel(
-    int recognizerId,
-    SpeakerModel speakerModel,
+    final int recognizerId,
+    final SpeakerModel speakerModel,
   ) async {
     await _channel.invokeMethod('recognizer.setSpeakerModel', {
       'recognizerId': recognizerId,
@@ -133,7 +134,7 @@ class VoskFlutterPlugin {
   /// audio input from the device microphone.
   ///
   /// This method may throw [MicrophoneAccessDeniedException].
-  Future<SpeechService> initSpeechService(Recognizer recognizer) async {
+  Future<SpeechService> initSpeechService(final Recognizer recognizer) async {
     if (await Permission.microphone.status == PermissionStatus.denied &&
         await Permission.microphone.request() == PermissionStatus.denied) {
       throw MicrophoneAccessDeniedException();
@@ -146,11 +147,11 @@ class VoskFlutterPlugin {
     return SpeechService(_channel);
   }
 
-  Future<void> _methodCallHandler(MethodCall call) async {
+  Future<void> _methodCallHandler(final MethodCall call) async {
     switch (call.method) {
       case 'model.created':
         final modelPath = call.arguments as String;
-        _pendingModels.remove(modelPath)?.complete(Model(modelPath, _channel));
+        _pendingModels.remove(modelPath)?.complete(Model(modelPath));
       case 'model.error':
         final args = call.arguments as Map;
         final modelPath = args['modelPath'] as String;
@@ -160,7 +161,7 @@ class VoskFlutterPlugin {
         final speakerModelPath = call.arguments as String;
         _pendingSpeakerModels
             .remove(speakerModelPath)
-            ?.complete(SpeakerModel(speakerModelPath, _channel));
+            ?.complete(SpeakerModel(speakerModelPath));
       case 'speakerModel.error':
         final args = call.arguments as Map;
         final speakerModelPath = args['speakerModelPath'] as String;
@@ -171,7 +172,11 @@ class VoskFlutterPlugin {
     }
   }
 
-  bool _supportsFFI() => Platform.isLinux || Platform.isWindows;
+  bool _supportsFFI() =>
+      Platform.isLinux ||
+      Platform.isWindows ||
+      Platform.isIOS ||
+      Platform.isMacOS;
 
   static VoskLibrary _loadVoskLibrary() {
     String libraryPath;
@@ -179,6 +184,12 @@ class VoskFlutterPlugin {
       libraryPath = Platform.environment['LIBVOSK_PATH']!;
     } else if (Platform.isWindows) {
       libraryPath = 'libvosk.dll';
+    } else if (Platform.isIOS || Platform.isMacOS) {
+      // On iOS/macOS with a framework, the symbols are usually globally available
+      // if statically linked, or we open the framework.
+      // Trying process() first is common for statically linked or embedded
+      // frameworks.
+      return VoskLibrary(DynamicLibrary.process());
     } else {
       throw UnsupportedError('Unsupported platform');
     }
@@ -188,16 +199,16 @@ class VoskFlutterPlugin {
   }
 
   /// Method used to load a model in a separate isolate.
-  static int _loadModel(String modelPath) {
+  static int _loadModel(final String modelPath) {
     final voskLib = _loadVoskLibrary();
-    final modelPointer =
-        using((arena) => voskLib.vosk_model_new(modelPath.toCharPtr(arena)));
+    final modelPointer = using(
+      (final arena) => voskLib.vosk_model_new(modelPath.toCharPtr(arena)),
+    );
 
     if (modelPointer == nullptr) {
       // TODO(sergsavchuk): throw a custom error after deletion of the
       // MethodChannel
-      // ignore: only_throw_errors
-      throw 'Failed to load model';
+      throw Exception('Failed to load model');
     }
     return modelPointer.address;
   }
