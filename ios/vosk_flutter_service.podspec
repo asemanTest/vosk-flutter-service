@@ -4,12 +4,12 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'vosk_flutter_service'
-  s.version          = '0.0.1'
+  s.version          = '0.0.2'
   s.summary          = 'Flutter plugin for offline speech recognition using Vosk.'
   s.description      = <<-DESC
 Flutter plugin for offline speech recognition using the Vosk speech recognition toolkit.
                        DESC
-  s.homepage         = 'https://github.com/dhia-bechattaoui/vosk_flutter_service'
+  s.homepage         = 'https://github.com/dhia-bechattaoui/vosk-flutter-service'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Alpha Cephei' => 'contact@bechattaoui.dev' }
   s.source           = { :path => '.' }

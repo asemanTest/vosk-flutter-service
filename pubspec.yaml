@@ -1,18 +1,18 @@
 name: vosk_flutter_service
 description: Flutter plugin for offline speech recognition using the Vosk speech recognition toolkit.
-version: 0.0.1
+version: 0.0.2
 homepage: https://bechattaoui.dev/
-repository: https://github.com/dhia-bechattaoui/vosk_flutter_service
+repository: https://github.com/dhia-bechattaoui/vosk-flutter-service
 
 environment:
   sdk: ">=3.8.0 <4.0.0"
   flutter: ">=3.32.0"
 
 topics:
-  - speech_recognition
-  - offline_speech
+  - speech-recognition
+  - offline-speech
   - vosk
-  - voice_control
+  - voice-control
   - ai
 
 funding:
