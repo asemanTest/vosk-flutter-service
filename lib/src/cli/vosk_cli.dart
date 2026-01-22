@@ -63,15 +63,13 @@ class _InstallCommand extends Command<void> {
   String getBinaryUrl() {
     switch (options.targetOsType!) {
       case TargetOsType.linux:
-        return 'https://github.com/alphacep/vosk-api/releases/download/v$libVersion/vosk-linux-x86_64-$libVersion.zip';
+        return 'https://github.com/dhia-bechattaoui/vosk-flutter-service/releases/download/v0.0.6/vosk-linux-x86_64-$libVersion.zip';
       case TargetOsType.windows:
-        return 'https://github.com/alphacep/vosk-api/releases/download/v$libVersion/vosk-win64-$libVersion.zip';
+        return 'https://github.com/dhia-bechattaoui/vosk-flutter-service/releases/download/v0.0.6/vosk-win-$libVersion.zip';
       case TargetOsType.ios:
-        // TODO: Update with the correct URL for vosk.xcframework
-        return 'https://github.com/alphacep/vosk-api/releases/download/v$libVersion/vosk-ios-$libVersion.zip';
+        return 'https://github.com/dhia-bechattaoui/vosk-flutter-service/releases/download/v0.0.6/vosk-ios-$libVersion.zip';
       case TargetOsType.macos:
-        // TODO: Update with the correct URL for vosk.xcframework if different
-        return 'https://github.com/alphacep/vosk-api/releases/download/v$libVersion/vosk-macos-$libVersion.zip';
+        return 'https://github.com/dhia-bechattaoui/vosk-flutter-service/releases/download/v0.0.6/vosk-macos-$libVersion.zip';
     }
   }
 

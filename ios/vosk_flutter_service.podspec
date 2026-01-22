@@ -5,7 +5,7 @@
 Pod::Spec.new do |s|
   s.name             = 'vosk_flutter_service'
 
-  s.version          = '0.0.4'
+  s.version          = '0.0.6'
   s.summary          = 'A new Flutter plugin project.'
   s.description      = <<-DESC
 A new Flutter plugin project.
