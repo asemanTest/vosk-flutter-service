@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Excluded large iOS and MacOS native binaries from the pub.dev package to comply with the 100MB size limit.
 - Updated the CLI tool to support downloading and installing native binaries for iOS and MacOS.
+- Fixed CLI executable name to match the package name (`vosk_flutter_service`).
 - Updated `README.md` with instructions for native binaries installation.
 
 ## [0.0.3] - 2026-01-22
