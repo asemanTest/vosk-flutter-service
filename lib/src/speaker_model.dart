@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:flutter/services.dart';
 import 'generated_vosk_bindings.dart';
 import 'vosk_flutter.dart';
 
@@ -7,9 +8,12 @@ import 'vosk_flutter.dart';
 class SpeakerModel {
   /// Use [VoskFlutterPlugin.createSpeakerModel] to create
   /// a [SpeakerModel] instance.
-  /// Use [VoskFlutterPlugin.createSpeakerModel] to create
-  /// a [SpeakerModel] instance.
-  SpeakerModel(this.path, [this.modelPointer, this._voskLibrary]);
+  SpeakerModel(
+    this.path,
+    this._channel, [
+    this.modelPointer,
+    this._voskLibrary,
+  ]);
 
   /// Location of this speaker model in the file system.
   final String path;
@@ -19,15 +23,17 @@ class SpeakerModel {
 
   final VoskLibrary? _voskLibrary;
 
-  /// Free all speaker model resources.
+  // The channel is passed for consistency but currently not used in this class.
+  // ignore: unused_field
+  final MethodChannel _channel;
+
+  /// Free all model resources.
   void dispose() {
     if (_voskLibrary != null) {
       _voskLibrary.vosk_spk_model_free(modelPointer!);
     }
   }
 
-  // Explanation: The toString method returns a string from the native library
-  // which might look like a runtimeType but is actually the string value.
   @override
   String toString() => 'SpeakerModel[path=$path, pointer=$modelPointer]';
 }

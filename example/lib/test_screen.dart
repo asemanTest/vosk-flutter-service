@@ -12,7 +12,7 @@ class TestScreen extends StatefulWidget {
 }
 
 class _TestScreenState extends State<TestScreen> {
-  final VoskFlutterPlugin _vosk = VoskFlutterPlugin();
+  final VoskFlutterPlugin _vosk = VoskFlutterPlugin.instance();
 
   Model? _model;
   bool _modelLoading = false;
@@ -419,7 +419,9 @@ class _TestScreenState extends State<TestScreen> {
     }
 
     _toastFutureError(
-      localSpeechService.stop().then((final _) => _showMessage(msg: 'Stopped')),
+      localSpeechService
+          .stop()
+          .then((final value) => _showMessage(msg: value.toString())),
     );
   }
 
@@ -453,7 +455,7 @@ class _TestScreenState extends State<TestScreen> {
     _toastFutureError(
       localSpeechService
           .cancel()
-          .then((final _) => _showMessage(msg: 'Canceled')),
+          .then((final value) => _showMessage(msg: value.toString())),
     );
   }
 

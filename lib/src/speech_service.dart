@@ -29,31 +29,30 @@ class SpeechService {
     return _channel.invokeMethod<bool>('speechService.start');
   }
 
-  /// Stop the speech service.
-  Future<void> stop() async {
-    await _channel.invokeMethod('speechService.stop');
+  /// Stop recognition.
+  Future<bool?> stop() async {
+    await _errorStreamSubscription?.cancel();
+    return _channel.invokeMethod<bool>('speechService.stop');
   }
 
-  /// Set the pause state of the speech service.
-  Future<void> setPause({required final bool paused}) async {
-    await _channel.invokeMethod('speechService.setPause', {'paused': paused});
-  }
+  /// Pause/unpause recognition.
+  Future<bool?> setPause({required final bool paused}) =>
+      _channel.invokeMethod<bool>('speechService.setPause', paused);
 
   /// Reset recognition.
   /// See [Recognizer.reset].
-  Future<void> reset() async {
-    await _channel.invokeMethod('speechService.reset');
-  }
+  Future<bool?> reset() => _channel.invokeMethod<bool>('speechService.reset');
 
   /// Cancel recognition.
-  Future<void> cancel() async {
+  Future<bool?> cancel() async {
     await _errorStreamSubscription?.cancel();
-    await _channel.invokeMethod('speechService.cancel');
+    return _channel.invokeMethod<bool>('speechService.cancel');
   }
 
+  /// Release service resources.
   Future<void> dispose() async {
     await _errorStreamSubscription?.cancel();
-    await _channel.invokeMethod<void>('speechService.destroy');
+    return _channel.invokeMethod<void>('speechService.destroy');
   }
 
   /// Get stream with voice recognition results.

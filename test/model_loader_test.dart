@@ -31,7 +31,7 @@ void main() {
           "size": 1377395170,
           "size_text": "1.3GiB",
           "type": "big",
-          "url": "https://bechattaoui.dev/vosk/models/vosk-model-ar-0.22-linto-1.1.0.zip",
+          "url": "https://alphacephei.com/vosk/models/vosk-model-ar-0.22-linto-1.1.0.zip",
           "version": "0.22-linto-1.1.0"
       },
       {
@@ -43,7 +43,7 @@ void main() {
           "size": 333241610,
           "size_text": "317.8MiB",
           "type": "big",
-          "url": "https://bechattaoui.dev/vosk/models/vosk-model-ar-mgb2-0.4.zip",
+          "url": "https://alphacephei.com/vosk/models/vosk-model-ar-mgb2-0.4.zip",
           "version": "mbg2-0.4"
       }
     ]
@@ -62,7 +62,7 @@ void main() {
     modelBytes = Uint8List.fromList(ZipEncoder().encode(archive));
     when(
       () => assetBundle.load(any()),
-    ).thenAnswer((final _) async => modelBytes.buffer.asByteData());
+    ).thenAnswer((_) async => modelBytes.buffer.asByteData());
   });
 
   tearDown(() {
@@ -76,7 +76,7 @@ void main() {
       registerFallbackValue(Uri.parse(''));
       when(
         () => client.get(any()),
-      ).thenAnswer((final _) async => http.Response(modelsJson, 200));
+      ).thenAnswer((_) async => http.Response(modelsJson, 200));
 
       final modelsList = await modelLoader.loadModelsList();
       expect(modelsList.length, 2);
@@ -105,10 +105,10 @@ void main() {
       registerFallbackValue(Uri.parse(''));
       when(
         () => client.get(any()),
-      ).thenAnswer((final _) async => http.Response.bytes(modelBytes, 200));
+      ).thenAnswer((_) async => http.Response.bytes(modelBytes, 200));
 
       final modelPath = await modelLoader.loadFromNetwork(
-        'https://bechattaoui.dev/vosk/models/$testModelName.zip',
+        'https://alphacephei.com/vosk/models/$testModelName.zip',
       );
 
       expect(

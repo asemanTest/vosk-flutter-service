@@ -22,7 +22,7 @@ class ModelLoader {
   }
 
   static const String _modelsListUrl =
-      'https://bechattaoui.dev/vosk/models/model-list.json';
+      'https://alphacephei.com/vosk/models/model-list.json';
 
   /// The path where the models loaded by this model loader will be located.
   /// If not specified [_defaultDecompressionPath] is used.
@@ -141,7 +141,7 @@ class ModelLoader {
 
 /// Description of a model.
 /// You can see the description of all VOSK models at
-/// https://bechattaoui.dev/vosk/models/model-list.json
+/// https://alphacephei.com/vosk/models/model-list.json
 class LanguageModelDescription {
   /// Create a model description.
   LanguageModelDescription({
@@ -198,7 +198,7 @@ class LanguageModelDescription {
   final String type;
 
   /// The url of the model file zip,
-  /// example: 'https://bechattaoui.dev/vosk/models/vosk-model-en-us-0.20.zip'.
+  /// example: 'https://alphacephei.com/vosk/models/vosk-model-en-us-0.20.zip'.
   final String url;
 
   /// The version of the model, example: '0.20'.

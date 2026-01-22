@@ -1,35 +1,33 @@
 #
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
-# Run `pod lib lint vosk_flutter_service.podspec` to validate before publishing.
+# Run `pod lib lint vosk_flutter.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
   s.name             = 'vosk_flutter_service'
-  s.version          = '0.0.2'
-  s.summary          = 'Flutter plugin for offline speech recognition using Vosk.'
+
+  s.version          = '0.3.48'
+  s.summary          = 'A new Flutter plugin project.'
   s.description      = <<-DESC
-Flutter plugin for offline speech recognition using the Vosk speech recognition toolkit.
+A new Flutter plugin project.
                        DESC
-  s.homepage         = 'https://github.com/dhia-bechattaoui/vosk-flutter-service'
+  s.homepage         = 'http://example.com'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Alpha Cephei' => 'contact@bechattaoui.dev' }
+  s.author           = { 'Alpha Cephei' => 'contact@alphacephei.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
-  s.public_header_files = 'Classes/**/*.h'
+  s.public_header_files = 'Classes/vosk_api.h'
   s.dependency 'Flutter'
   s.platform = :ios, '12.0'
-  s.swift_version = '5.0'
+  s.vendored_frameworks = 'Frameworks/vosk.xcframework'
+  s.libraries = 'c++'
+  s.frameworks = 'Accelerate'
 
-  # Link to the pre-compiled Vosk framework.
-  # Note: The user (or CI) must provide LibVosk.xcframework in the ios/Frameworks directory.
-  # We might need to add a script to download it if it's not vendored.
-  # For now, we assume it is vendored or manually placed.
-  s.vendored_frameworks = 'Frameworks/libvosk.xcframework'
-  
-  # Ensure the framework is preserved
-  s.preserve_paths = 'Frameworks/libvosk.xcframework'
-  
+  # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 
     'DEFINES_MODULE' => 'YES', 
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386'
   }
+  s.swift_version = '5.0'
+
+  s.preserve_paths = 'Frameworks/vosk.xcframework/**/*', 'Classes/vosk_api.h'
 end

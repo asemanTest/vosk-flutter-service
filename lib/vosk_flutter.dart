@@ -1,3 +1,6 @@
+/// Vosk Offline Speech Recognition plugin for Flutter.
+library;
+
 export 'src/model.dart';
 export 'src/model_loader.dart';
 export 'src/recognizer.dart';

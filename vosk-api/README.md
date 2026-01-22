@@ -24,4 +24,4 @@ big clusters.
 # Documentation
 
 For installation instructions, examples and documentation visit [Vosk
-Website](https://bechattaoui.dev/vosk).
+Website](https://alphacephei.com/vosk).

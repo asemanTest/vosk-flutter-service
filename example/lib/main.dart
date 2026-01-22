@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 import 'package:vosk_flutter_service/vosk_flutter.dart';
 
@@ -32,50 +30,51 @@ class _VoskFlutterDemoState extends State<VoskFlutterDemo> {
   static const _modelName = 'vosk-model-small-en-us-0.15';
   static const _sampleRate = 16000;
 
-  final VoskFlutterPlugin _vosk = VoskFlutterPlugin();
-  final ModelLoader _modelLoader = ModelLoader();
-  late final AudioRecorder _recorder;
+  final _vosk = VoskFlutterPlugin.instance();
+  final _modelLoader = ModelLoader();
+  final _recorder = Record();
 
-  bool _recognitionStarted = false;
+  String? _fileRecognitionResult;
   String? _error;
   Model? _model;
-
-  // The recognizer is nullable because it is initialized asynchronously.
-  Recognizer? recognizer;
-
+  late Recognizer _recognizer;
   SpeechService? _speechService;
-  String? _fileRecognitionResult;
+
+  bool _recognitionStarted = false;
 
   @override
   void initState() {
     super.initState();
-    _recorder = AudioRecorder();
-    unawaited(_initModel());
+    unawaited(_initVosk());
   }
 
-  Future<void> _initModel() async {
+  Future<void> _initVosk() async {
     try {
       final modelsList = await _modelLoader.loadModelsList();
-      final modelDescription = modelsList.firstWhere(
-        (final model) => model.name == _modelName,
-      );
+      final modelDescription =
+          modelsList.firstWhere((final model) => model.name == _modelName);
       final modelPath =
           await _modelLoader.loadFromNetwork(modelDescription.url);
       final model = await _vosk.createModel(modelPath);
-      setState(() => _model = model);
+      if (mounted) {
+        setState(() => _model = model);
+      }
 
-      final localRecognizer = await _vosk.createRecognizer(
+      _recognizer = await _vosk.createRecognizer(
         model: _model!,
         sampleRate: _sampleRate,
       );
-      setState(() => recognizer = localRecognizer);
 
       if (Platform.isAndroid) {
-        final speechService = await _vosk.initSpeechService(recognizer!);
-        setState(() => _speechService = speechService);
+        final speechService = await _vosk.initSpeechService(_recognizer);
+        if (mounted) {
+          setState(() => _speechService = speechService);
+        }
       }
-    } on Object catch (e) {
-      setState(() => _error = e.toString());
+    } on Exception catch (e) {
+      if (mounted) {
+        setState(() => _error = e.toString());
+      }
     }
   }
 
@@ -88,10 +87,6 @@ class _VoskFlutterDemoState extends State<VoskFlutterDemo> {
     } else if (_model == null) {
       return const Scaffold(
         body: Center(child: Text('Loading model...', style: _textStyle)),
-      );
-    } else if (recognizer == null) {
-      return const Scaffold(
-        body: Center(child: Text('Loading recognizer...', style: _textStyle)),
       );
     } else if (Platform.isAndroid && _speechService == null) {
       return const Scaffold(
@@ -149,15 +144,14 @@ class _VoskFlutterDemoState extends State<VoskFlutterDemo> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
-                onPressed: _recognitionStarted
-                    ? () async {
-                        await _stopRecording();
-                        setState(() => _recognitionStarted = false);
-                      }
-                    : () async {
-                        await _recordAudio();
-                        setState(() => _recognitionStarted = true);
-                      },
+                onPressed: () async {
+                  if (_recognitionStarted) {
+                    await _stopRecording();
+                  } else {
+                    await _recordAudio();
+                  }
+                  setState(() => _recognitionStarted = !_recognitionStarted);
+                },
                 child: Text(
                   _recognitionStarted ? 'Stop recording' : 'Record audio',
                 ),
@@ -166,69 +160,35 @@ class _VoskFlutterDemoState extends State<VoskFlutterDemo> {
                 'Final recognition result: $_fileRecognitionResult',
                 style: _textStyle,
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  final filePickerResult =
-                      await FilePicker.platform.pickFiles();
-                  final file = filePickerResult?.files.single;
-                  if (file != null) {
-                    await _recognizeFile(file.path!);
-                  }
-                },
-                child: const Text('Pick audio file'),
-              ),
             ],
           ),
         ),
       );
 
-  @override
-  void dispose() {
-    unawaited(_recorder.dispose());
-    super.dispose();
-  }
-
   Future<void> _recordAudio() async {
     try {
-      if (await _recorder.hasPermission()) {
-        await _recorder.start(
-          const RecordConfig(
-            encoder: AudioEncoder.wav,
-            sampleRate: _sampleRate,
-            numChannels: 1,
-          ),
-          path: '${(await getTemporaryDirectory()).path}/audio.wav',
-        );
-      }
-    } on Object catch (e) {
-      _setError(e.toString());
+      await _recorder.start(
+        samplingRate: 16000,
+        encoder: AudioEncoder.wav,
+        numChannels: 1,
+      );
+    } on Exception catch (e) {
+      _error =
+          '$e\n\n Make sure fmedia(https://stsaz.github.io/fmedia/) is installed on Linux';
     }
   }
 
   Future<void> _stopRecording() async {
     try {
-      final path = await _recorder.stop();
-      if (path != null) {
-        await _recognizeFile(path);
+      final filePath = await _recorder.stop();
+      if (filePath != null) {
+        final bytes = File(filePath).readAsBytesSync();
+        await _recognizer.acceptWaveformBytes(bytes);
+        _fileRecognitionResult = await _recognizer.getFinalResult();
       }
-    } on Object catch (e) {
-      _setError(e.toString());
+    } on Exception catch (e) {
+      _error =
+          '$e\n\n Make sure fmedia(https://stsaz.github.io/fmedia/) is installed on Linux';
     }
-  }
-
-  Future<void> _recognizeFile(final String path) async {
-    try {
-      final bytes = File(path).readAsBytesSync();
-      await recognizer!.acceptWaveformBytes(bytes);
-      final result = await recognizer!.getFinalResult();
-      setState(() => _fileRecognitionResult = result);
-    } on Object catch (e) {
-      _setError(e.toString());
-    }
-  }
-
-  void _setError(final String error) {
-    setState(() => _error = error);
   }
 }
