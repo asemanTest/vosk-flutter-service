@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.0.4] - 2026-01-22
+
+### Changed
+- Excluded large iOS and MacOS native binaries from the pub.dev package to comply with the 100MB size limit.
+- Updated the CLI tool to support downloading and installing native binaries for iOS and MacOS.
+- Updated `README.md` with instructions for native binaries installation.
+
 ## [0.0.3] - 2026-01-22
 
 > [!IMPORTANT]
@@ -35,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Resolved all analysis issues.
 - Updated AGP/Gradle versions.
 
-[0.0.3]: https://github.com/dhia-bechattaoui/vosk-flutter-service/compare/v0.0.3...HEAD
+[0.0.4]: https://github.com/dhia-bechattaoui/vosk-flutter-service/compare/v0.0.4...HEAD
+[0.0.3]: https://github.com/dhia-bechattaoui/vosk-flutter-service/compare/v0.0.3...v0.0.4
 [0.0.2]: https://github.com/dhia-bechattaoui/vosk-flutter-service/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/dhia-bechattaoui/vosk-flutter-service/releases/tag/v0.0.1
