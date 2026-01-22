@@ -53,6 +53,10 @@ class _InstallCommand extends Command<void> {
         return path.join(voskPackagePath, 'linux', 'libs');
       case TargetOsType.windows:
         return path.join(voskPackagePath, 'windows', 'libs');
+      case TargetOsType.ios:
+        return path.join(voskPackagePath, 'ios', 'Frameworks');
+      case TargetOsType.macos:
+        return path.join(voskPackagePath, 'macos', 'Frameworks');
     }
   }
 
@@ -62,6 +66,12 @@ class _InstallCommand extends Command<void> {
         return 'https://github.com/alphacep/vosk-api/releases/download/v$libVersion/vosk-linux-x86_64-$libVersion.zip';
       case TargetOsType.windows:
         return 'https://github.com/alphacep/vosk-api/releases/download/v$libVersion/vosk-win64-$libVersion.zip';
+      case TargetOsType.ios:
+        // TODO: Update with the correct URL for vosk.xcframework
+        return 'https://github.com/alphacep/vosk-api/releases/download/v$libVersion/vosk-ios-$libVersion.zip';
+      case TargetOsType.macos:
+        // TODO: Update with the correct URL for vosk.xcframework if different
+        return 'https://github.com/alphacep/vosk-api/releases/download/v$libVersion/vosk-macos-$libVersion.zip';
     }
   }
 
@@ -161,13 +171,16 @@ class _InstallCommand extends Command<void> {
       destinationDir.absolute.path,
       path.basenameWithoutExtension(binaryUrl),
     );
-    for (final filesystemEntity in Directory(extractedDirectory).listSync()) {
-      filesystemEntity.renameSync(
-        path.join(
-          destinationDir.absolute.path,
-          path.basename(filesystemEntity.absolute.path),
-        ),
-      );
+    if (await Directory(extractedDirectory).exists()) {
+      for (final filesystemEntity in Directory(extractedDirectory).listSync()) {
+        filesystemEntity.renameSync(
+          path.join(
+            destinationDir.absolute.path,
+            path.basename(filesystemEntity.absolute.path),
+          ),
+        );
+      }
+      await Directory(extractedDirectory).delete(recursive: true);
     }
 
     final versionFile = File(

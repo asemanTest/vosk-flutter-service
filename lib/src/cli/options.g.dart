@@ -31,6 +31,8 @@ Options _$parseOptionsResult(ArgResults result) => Options()
 const _$TargetOsTypeEnumMapBuildCli = <TargetOsType, String>{
   TargetOsType.linux: 'linux',
   TargetOsType.windows: 'windows',
+  TargetOsType.ios: 'ios',
+  TargetOsType.macos: 'macos',
 };
 
 ArgParser _$populateOptionsParser(ArgParser parser) => parser
@@ -38,7 +40,7 @@ ArgParser _$populateOptionsParser(ArgParser parser) => parser
     'target-os-type',
     abbr: 't',
     help: 'The target OS to install binaries for.',
-    allowed: ['linux', 'windows'],
+    allowed: ['linux', 'windows', 'ios', 'macos'],
   );
 
 final _$parserForOptions = _$populateOptionsParser(ArgParser());

@@ -5,4 +5,10 @@ enum TargetOsType {
 
   /// windows-x86_64 OS.
   windows,
+
+  /// ios OS.
+  ios,
+
+  /// macos OS.
+  macos,
 }

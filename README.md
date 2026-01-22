@@ -10,9 +10,25 @@ Flutter plugin for Vosk speech recognition.
 
 | Android | iOS | MacOS | Web | Linux | Windows |
 | :-----: | :-: | :---: | :-: | :---: | :----: |
-|   ✔    | ➖   |  ➖   | ➖   |  ✔   |    ✔   |
+|   ✔    | ✔   |  ✔    | ➖   |  ✔    |    ✔   |
 
 ## Usage
+
+### Native Binaries Installation
+
+This plugin requires native Vosk binaries to function on most platforms. Follow the instructions below to install them:
+
+#### Android
+Native binaries are included in the package. No additional steps are required.
+
+#### iOS, MacOS, Linux, and Windows
+Run the following command in your project root to download and install the native binaries:
+
+```bash
+dart run vosk_flutter_service install --t <platform>
+```
+
+Replace `<platform>` with `ios`, `macos`, `linux`, or `windows`.
 
 ### Configurations
 
