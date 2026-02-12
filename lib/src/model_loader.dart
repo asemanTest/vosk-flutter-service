@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:archive/archive_io.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
@@ -85,6 +86,13 @@ class ModelLoader {
     final bytes = await httpClient
         .get(Uri.parse(modelUrl))
         .then((final response) => response.bodyBytes);
+
+    final digest = sha256.convert(bytes);
+    final sha256Hash = digest.toString();
+    if (sha256Hash !=
+        '977cb5faa538f3a835ccfd35f5f6d8284b5c450b89c700b9bd4736b66536ad46') {
+      throw Exception('Model download failed');
+    }
 
     final decompressionPath = await _extractModel(bytes);
     final decompressedModelRoot = path.join(decompressionPath, modelName);
