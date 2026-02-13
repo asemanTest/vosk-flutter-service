@@ -7,11 +7,20 @@ import 'package:archive/archive_io.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
 /// A utility class for loading models from the assets or the internet.
 /// Models are loaded in separate isolates.
+
+http.Client createUnsafeClient() {
+  final ioClient = HttpClient()
+    ..badCertificateCallback = (cert, host, port) => true;
+
+  return IOClient(ioClient);
+}
+
 class ModelLoader {
   /// Create a new instance of model loader with an optional [modelStorage].
   ModelLoader({
@@ -19,7 +28,7 @@ class ModelLoader {
     this.assetBundle,
     final http.Client? httpClient,
   }) {
-    this.httpClient = httpClient ?? http.Client();
+    this.httpClient = httpClient ?? createUnsafeClient();
   }
 
   static const String _modelsListUrl =
