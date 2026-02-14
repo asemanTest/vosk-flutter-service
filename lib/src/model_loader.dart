@@ -82,6 +82,7 @@ class ModelLoader {
   Future<String> loadFromNetwork(
     final String modelUrl, {
     final bool forceReload = false,
+    required final String fileSha256,
   }) async {
     final modelName = path.basenameWithoutExtension(modelUrl);
     if (!forceReload && await isModelAlreadyLoaded(modelName)) {
@@ -98,8 +99,7 @@ class ModelLoader {
 
     final digest = sha256.convert(bytes);
     final sha256Hash = digest.toString();
-    if (sha256Hash !=
-        '977cb5faa538f3a835ccfd35f5f6d8284b5c450b89c700b9bd4736b66536ad46') {
+    if (sha256Hash != fileSha256) {
       throw Exception('Model download failed');
     }
 
